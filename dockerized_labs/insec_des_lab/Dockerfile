@@ -12,4 +12,7 @@ ENV FLASK_RUN_HOST=0.0.0.0
 
 EXPOSE 8080
 
+RUN adduser --disabled-password --gecos '' --uid 1000 appuser
+USER appuser
+
 CMD ["flask", "run", "--debug", "--port=8080"]
