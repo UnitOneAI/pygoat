@@ -14,8 +14,13 @@ ENV FLASK_APP=app.py
 ENV FLASK_ENV=development
 ENV PYTHONUNBUFFERED=1
 
+# Create a non-root user
+RUN groupadd -r appuser && useradd -r -g appuser appuser
+RUN chown -R appuser:appuser /app
+USER appuser
+
 # Expose port 5000
 EXPOSE 5000
 
 # Run the application
-CMD ["python", "app.py"] 
+CMD ["python", "app.py"]
