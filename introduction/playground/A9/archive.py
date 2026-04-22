@@ -1,5 +1,7 @@
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth import authenticate
+from django.contrib.auth.models import User
 
 from .main import Log
 
@@ -13,8 +15,9 @@ def log_function_target(request):
     if request.method == "POST":
         username = request.POST['username']
         password = request.POST['password']
-        L.info(f"POST request with username {username} and password {password}")
-        if username == "admin" and password == "admin":
+        L.info(f"POST request with username {username}")
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
             return JsonResponse({"message":"Loged in successfully", "method":"post"},status = 200)
         return JsonResponse({"message":"Invalid credentials", "method":"post"},status = 401)
     if request.method == "PUT":
@@ -31,32 +34,3 @@ def log_function_target(request):
     if request.method == "UPDATE":
         return JsonResponse({"message":"success", "method":"update"},status = 200)
     return JsonResponse({"message":"method not allowed"},status = 403)
-
-
-# ======================================
-
-import datetime
-
-
-# f = open('test.log', 'a') --> use this file to log
-class Log:
-    def __init__(self,request):
-        self.request = request
-
-    def info(self,msg):
-        now = datetime.datetime.now()
-        f = open('test.log', 'a')
-        f.write(f"INFO:{now}:{msg}\n")
-        f.close()
-
-    def warning(self,msg):
-        now = datetime.datetime.now()
-        f = open('test.log', 'a')
-        f.write(f"WARNING:{now}:{msg}\n")
-        f.close()
-
-    def error(self,msg):
-        now = datetime.datetime.now()
-        f = open('test.log', 'a')
-        f.write(f"ERROR:{now}:{msg}\n")
-        f.close()
