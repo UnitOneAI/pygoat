@@ -1,15 +1,17 @@
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.middleware.csrf import get_token
+from django.views.decorators.http import require_http_methods
 
 from .main import Log
 
 
-@csrf_exempt
 def log_function_target(request):
     L = Log(request)
     if request.method == "GET":
         L.info("GET request")
-        return JsonResponse({"message":"normal get request", "method":"get"},status = 200)
+        csrf_token = get_token(request)
+        return JsonResponse({"message":"normal get request", "method":"get", "csrf_token": csrf_token},status = 200)
     if request.method == "POST":
         username = request.POST['username']
         password = request.POST['password']
