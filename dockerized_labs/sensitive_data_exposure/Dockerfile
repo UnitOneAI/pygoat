@@ -1,16 +1,11 @@
-FROM python:3.9-slim
+# Create non-root user
+RUN groupadd -r appuser && useradd -r -g appuser appuser
 
-WORKDIR /app
+# Change ownership of app directory to non-root user
+RUN chown -R appuser:appuser /app
 
-COPY requirements.txt .
-
-RUN pip install --no-cache-dir -r requirements.txt
-
-COPY . .
-
-# Add script to make sure migrations run properly
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+# Switch to non-root user
+USER appuser
 
 EXPOSE 8000
 
